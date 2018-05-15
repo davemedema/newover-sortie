@@ -85,6 +85,9 @@ class Sortie
       case 'simple':
         $replace = $this->replaceSimple($expression, $data);
         break;
+      default:
+        $replace = '';
+        break;
       }
 
       $search    = sprintf('[%s]', $expression['expression']);
@@ -753,7 +756,7 @@ class Sortie
    */
   protected function modifyYear($input, $params)
   {
-    return (int)$input;
+    return (string)(int)$input;
   }
 
   /**
@@ -845,7 +848,7 @@ class Sortie
    *
    * @param array $data
    *
-   * @return $data
+   * @return array
    */
   protected function sanitizeData($data)
   {

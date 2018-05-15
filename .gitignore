@@ -2,10 +2,13 @@
 *.pyc
 
 .DS_Store
+.php_cs
+.php_cs.cache
 .sass-cache
 .svn
 
 composer.lock
+coverage.xml
 
 tests/coverage/
 vendor/
