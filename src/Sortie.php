@@ -78,15 +78,14 @@ class Sortie
     $processed = $this->field;
 
     foreach ($this->expressions as $expression) {
+      $replace = '';
+
       switch ($expression['type']) {
       case 'boolean':
         $replace = $this->replaceBoolean($expression, $data);
         break;
       case 'simple':
         $replace = $this->replaceSimple($expression, $data);
-        break;
-      default:
-        $replace = '';
         break;
       }
 
@@ -771,15 +770,12 @@ class Sortie
   {
     $parts = $expression['parts'];
 
-    if (!$parts || !is_array($parts) || (count($parts) !== 3)) {
-      throw new Exception(sprintf('Invalid boolean expression: %s', print_r($expression, true)));
-    }
-
     $condition  = $expression['parts'][0];
     $conditions = explode('=', $condition);
 
     if (empty($conditions[0]) || empty($conditions[1])) {
-      throw new Exception(sprintf('Invalid boolean expression condition: %s', print_r($condition, true)));
+      // TODO: Log this to improve edge cases.
+      return '';
     }
 
     $replace1 = $this->replaceSimple([

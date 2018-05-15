@@ -13,11 +13,18 @@ class ModifyTest extends AbstractTestCase
    */
   public function test()
   {
+    // Empty property...
+    $sortie = new Sortie('[->upper]');
+
+    $actual = $sortie->process(['foo' => 'bar']);
+
+    $this->assertSame('', $actual);
+
     // Empty modifier...
     $sortie = new Sortie('[foo->]');
 
-    $actual = $sortie->process(['foo' => 'Foo']);
+    $actual = $sortie->process(['foo' => 'bar']);
 
-    $this->assertSame('Foo', $actual);
+    $this->assertSame('bar', $actual);
   }
 }

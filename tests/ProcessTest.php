@@ -158,5 +158,15 @@ class ProcessTest extends AbstractTestCase
     ]);
 
     $this->assertSame('TEST', $actual);
+
+    // Invalid expression condition...
+    $sortie = new Sortie('[if(foo){"TRUE"}else{"FALSE"}]');
+
+    $actual = $sortie->process([
+      'bar' => 'BAZ',
+      'foo' => 'BAZ',
+    ]);
+
+    $this->assertSame('', $actual);
   }
 }

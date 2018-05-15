@@ -46,7 +46,7 @@
       "@phpcs"
     ],
     "pcs": "php-cs-fixer fix --diff --dry-run --verbose",
-    "phpstan": "phpstan analyse --configuration phpstan.neon --level 3 src tests",
+    "phpstan": "vendor/bin/phpstan analyse --configuration phpstan.neon --level 3 src tests",
     "phpunit": "phpunit --coverage-html=tests/coverage --verbose"
   }
 }
