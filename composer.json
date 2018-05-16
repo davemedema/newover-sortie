@@ -37,16 +37,6 @@
     "nesbot/carbon": "^1.27"
   },
   "require-dev": {
-    "phpstan/phpstan": "^0.9.2",
     "phpunit/phpunit": "^7.0"
-  },
-  "scripts": {
-    "test": [
-      "@phpunit",
-      "@phpcs"
-    ],
-    "pcs": "php-cs-fixer fix --diff --dry-run --verbose",
-    "phpstan": "vendor/bin/phpstan analyse --configuration phpstan.neon --level 3 src tests",
-    "phpunit": "phpunit --coverage-html=tests/coverage --verbose"
   }
 }

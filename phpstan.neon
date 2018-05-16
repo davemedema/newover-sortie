@@ -1,3 +1,0 @@
-parameters:
-	ignoreErrors:
-		- '#Class Sortie\\Sortie constructor invoked with 0 parameters, 1 required.#'
