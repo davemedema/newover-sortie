@@ -5,7 +5,6 @@
 .gitignore export-ignore
 .travis.yml export-ignore
 phpunit.xml export-ignore
-CHANGELOG-* export-ignore
 
 /.github export-ignore
 /tests export-ignore
