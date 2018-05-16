@@ -8,7 +8,11 @@
 .svn
 
 composer.lock
+composer.phar
 coverage.xml
+Thumbs.db
 
-tests/coverage/
-vendor/
+/.idea
+/.vscode
+/tests/coverage
+/vendor
