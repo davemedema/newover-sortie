@@ -8,22 +8,28 @@ use Illuminate\Support\Str;
 class Sortie
 {
   /**
+   * The processed expressions.
+   *
    * @var array
    */
   protected $expressions = [];
 
   /**
+   * The raw field.
+   *
    * @var string
    */
   protected $field = '';
 
   /**
+   * The field's properties.
+   *
    * @var array
    */
   protected $properties = [];
 
   /**
-   * Create a new instance.
+   * Create a new Sortie instance.
    *
    * @param string $field
    */
