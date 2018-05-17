@@ -78,12 +78,12 @@ class ProcessTest extends AbstractTestCase
     $this->assertSame('foo BAR', $actual);
 
     // Space before expression property...
-    $sortie = new Sortie('[ foo] [bar] [ baz ]');
+    $sortie = new Sortie('[ foo] [bar ] [ baz ]');
 
     $actual = $sortie->process([
-      ' bar ' => 'BAR',
-      ' baz ' => 'BAZ',
-      'foo' => 'FOO',
+      ' bar' => 'BAR',
+      'baz'  => 'BAZ',
+      'foo ' => 'FOO',
     ]);
 
     $this->assertSame('FOO BAR BAZ', $actual);

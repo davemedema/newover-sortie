@@ -22,7 +22,7 @@ class Sortie
   protected $field = '';
 
   /**
-   * The field's properties.
+   * The processed properties.
    *
    * @var array
    */
@@ -113,7 +113,7 @@ class Sortie
    */
   public function setField($field)
   {
-    $this->field = ($field && is_string($field)) ? $field : '';
+    $this->field = static::sanitizeField($field);
 
     $this->hydrate();
   }
@@ -156,8 +156,8 @@ class Sortie
    */
   protected function hydrate()
   {
-    // Reset the hyrated properties first in case `$this->field` is empty or
-    // invalid.
+    // Reset the hyrated expressions and properties first in case the field is
+    // empty or invalid.
     $this->expressions = [];
     $this->properties  = [];
 
@@ -172,7 +172,9 @@ class Sortie
     }
 
     foreach ($matches[1] as $expression) {
-      if (preg_match('/^\s*if\s*\(([^\)]+)\)\s*{([^}]*)}\s*else\s*{([^}]*)}$/iu', $expression, $matches)) {
+      $expression = static::sanitizeExpression($expression);
+
+      if (preg_match('/^if\s*\(([^\)]+)\)\s*{([^}]*)}\s*else\s*{([^}]*)}$/iu', $expression, $matches)) {
         $this->expressions[] = [
           'expression' => $expression,
           'parts'      => array_slice($matches, 1),
@@ -227,85 +229,6 @@ class Sortie
   }
 
   /**
-   * modifyCamel
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyCamel($input, $params)
-  {
-    return Str::camel($input);
-  }
-
-  /**
-   * modifyClean
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyClean($input, $params = [])
-  {
-    return trim(preg_replace('/\s+/', ' ', $input));
-  }
-
-  /**
-   * modifyDate
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyDate($input, $params)
-  {
-    $carbon = Carbon::parse($input);
-
-    if (count($params) < 1) {
-      return $carbon->format('m/d/Y');
-    }
-
-    $format = implode(':', $params);
-    $format = trim($format, "'");
-
-    if (defined("DateTime::{$format}")) {
-      $format = constant("DateTime::{$format}");
-    }
-
-    switch ($format) {
-    case 'datetime':
-      $format = 'Y-m-d H:i:s';
-      break;
-    }
-
-    return $carbon->format($format);
-  }
-
-  /**
-   * modifyEmail
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyEmail($input, $params)
-  {
-    $emails = explode(',', $input);
-
-    $email = isset($emails[0]) ? trim($emails[0]) : '';
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      return '';
-    }
-
-    return Str::lower($email);
-  }
-
-  /**
    * modifyException
    *
    * @param string $input
@@ -316,60 +239,6 @@ class Sortie
   protected function modifyException($input, $params)
   {
     throw new Exception('Exception for testing purposes.');
-  }
-
-  /**
-   * modifyKebab
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyKebab($input, $params)
-  {
-    return Str::kebab($input);
-  }
-
-  /**
-   * modifyLimit
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyLimit($input, $params)
-  {
-    if (count($params) < 1) {
-      return $input;
-    }
-
-    $limit = isset($params[0]) ? (int)$params[0] : 100;
-    $end   = isset($params[1]) ? $params[1] : '...';
-
-    return Str::limit($input, $limit, $end);
-  }
-
-  /**
-   * modifyLower
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyLower($input, $params)
-  {
-    if (isset($params[0])) {
-      $ignore = explode(',', $params[0]);
-
-      if (in_array($input, $ignore)) {
-        return $input;
-      }
-    }
-
-    return Str::lower($input);
   }
 
   /**
@@ -845,20 +714,198 @@ class Sortie
     return $replace;
   }
 
+  // Static Methods
+  // ---------------------------------------------------------------------------
+
   /**
-   * sanitizeData
+   * modifyCamel
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyCamel($input, $params = [])
+  {
+    return Str::camel($input);
+  }
+
+  /**
+   * modifyClean
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyClean($input, $params = [])
+  {
+    return trim(preg_replace('/\s+/', ' ', $input));
+  }
+
+  /**
+   * modifyDate
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyDate($input, $params = [])
+  {
+    $carbon = Carbon::parse($input);
+
+    if (count($params) < 1) {
+      return $carbon->format('m/d/Y');
+    }
+
+    $format = implode(':', $params);
+    $format = trim($format, "'");
+
+    if (defined("DateTime::{$format}")) {
+      $format = constant("DateTime::{$format}");
+    }
+
+    switch ($format) {
+    case 'datetime':
+      $format = 'Y-m-d H:i:s';
+      break;
+    }
+
+    return $carbon->format($format);
+  }
+
+  /**
+   * modifyEmail
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyEmail($input, $params = [])
+  {
+    $emails = explode(',', $input);
+
+    $email = isset($emails[0]) ? trim($emails[0]) : '';
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      return '';
+    }
+
+    return Str::lower($email);
+  }
+
+  /**
+   * modifyKebab
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyKebab($input, $params = [])
+  {
+    return Str::kebab($input);
+  }
+
+  /**
+   * modifyLimit
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyLimit($input, $params = [])
+  {
+    if (count($params) < 1) {
+      return $input;
+    }
+
+    $limit = isset($params[0]) ? (int)$params[0] : 100;
+    $end   = isset($params[1]) ? $params[1] : '...';
+
+    return Str::limit($input, $limit, $end);
+  }
+
+  /**
+   * modifyLower
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  public static function modifyLower($input, $params = [])
+  {
+    if (isset($params[0])) {
+      $ignore = explode(',', $params[0]);
+
+      if (in_array($input, $ignore)) {
+        return $input;
+      }
+    }
+
+    return Str::lower($input);
+  }
+
+  /**
+   * Sanitizes raw data.
    *
    * @param array $data
    *
    * @return array
    */
-  protected function sanitizeData($data)
+  public static function sanitizeData($data)
   {
     $sanitized = [];
 
     foreach ($data as $key => $value) {
       $sanitized[Str::lower(trim($key))] = $value;
     }
+
+    return $sanitized;
+  }
+
+  /**
+   * Sanitizes a raw expression.
+   *
+   * @param string $expression
+   *
+   * @return string
+   */
+  public static function sanitizeExpression($expression)
+  {
+    $sanitized = trim($expression);
+
+    return $sanitized;
+  }
+
+  /**
+   * Sanitizes a raw field.
+   *
+   * @param string $field
+   *
+   * @return string
+   */
+  public static function sanitizeField($field)
+  {
+    $sanitized = trim($field);
+
+    // Simple...
+    $sanitized = preg_replace('/\[\s*/u',       '[',  $sanitized); // Remove spaces after "[".
+    $sanitized = preg_replace('/\s*\]/u',       ']',  $sanitized); // Remove spaces before "]".
+    $sanitized = preg_replace('/\s*-\s*>\s*/u', '->', $sanitized); // Remove spaces in and around "->".
+    $sanitized = preg_replace('/\s*\|\s*/u',    '|',  $sanitized); // Remove spaces around "|".
+    $sanitized = preg_replace('/\s*:\s*/u',     ':',  $sanitized); // Remove spaces around ":".
+
+    // Boolean...
+    $sanitized = preg_replace('/\s*\(\s*/u', '(', $sanitized); // Remove spaces around "(".
+    $sanitized = preg_replace('/\s*\)\s*/u', ')', $sanitized); // Remove spaces around ")".
+    $sanitized = preg_replace('/\s*=\s*/u',  '=', $sanitized); // Remove spaces around "=".
+    $sanitized = preg_replace('/\s*{\s*/u',  '{', $sanitized); // Remove spaces around "{".
+    $sanitized = preg_replace('/\s*}\s*/u',  '}', $sanitized); // Remove spaces around "}".
 
     return $sanitized;
   }

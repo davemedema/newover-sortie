@@ -16,8 +16,6 @@ class ConstructTest extends AbstractTestCase
   {
     $expectedField = '[foo->one|bar->one:param|baz] - [qux->one->two:param:param]';
 
-    $sortie = new Sortie($expectedField);
-
     $expectedExpressions = [
       [
         'expression' => 'foo->one|bar->one:param|baz',
@@ -50,6 +48,8 @@ class ConstructTest extends AbstractTestCase
     ];
 
     $expectedProperties = ['foo', 'bar', 'baz', 'qux'];
+
+    $sortie = new Sortie($expectedField);
 
     $this->assertSortie($sortie);
 
@@ -111,8 +111,6 @@ class ConstructTest extends AbstractTestCase
   {
     $expectedField = '[foo]';
 
-    $sortie = new Sortie($expectedField);
-
     $expectedExpressions = [
       [
         'expression' => 'foo',
@@ -127,6 +125,8 @@ class ConstructTest extends AbstractTestCase
     ];
 
     $expectedProperties = ['foo'];
+
+    $sortie = new Sortie($expectedField);
 
     $this->assertSortie($sortie);
 

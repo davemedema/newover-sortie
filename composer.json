@@ -1,7 +1,7 @@
 {
   "name": "newover/sortie",
   "description": "A way out for data.",
-  "homepage": "https://github.com/davemedema/newover-sortie",
+  "homepage": "https://github.com/davemedema/sortie",
   "license": "MIT",
   "minimum-stability": "dev",
   "prefer-stable": true,
