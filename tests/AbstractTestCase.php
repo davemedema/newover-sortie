@@ -6,6 +6,9 @@ use Sortie\Sortie;
 
 abstract class AbstractTestCase extends TestCase
 {
+  // Overridden Methods
+  // ---------------------------------------------------------------------------
+
   /**
    * setUp
    */
@@ -20,15 +23,8 @@ abstract class AbstractTestCase extends TestCase
   {
   }
 
-  /**
-   * assertSortie
-   *
-   * @param mixed $actual
-   */
-  protected function assertReturnsEmptyStringWhen($actual)
-  {
-    $this->assertInstanceOf(Sortie::class, $actual);
-  }
+  // Protected Methods
+  // ---------------------------------------------------------------------------
 
   /**
    * assertSortie

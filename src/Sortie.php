@@ -2,6 +2,7 @@
 namespace Sortie;
 
 use Carbon\Carbon;
+use DateTime;
 use Exception;
 use Illuminate\Support\Str;
 
@@ -191,41 +192,163 @@ class Sortie
   }
 
   /**
-   * modify
+   * Modifies an input.
    *
    * @param string $input
    * @param string $modifier
    *
+   * @throws Exception if the modifier is not whitelisted.
+   *
    * @return string
    */
-  protected function modify($input, $modifier)
+  protected function modify(string $input, string $modifier): string
   {
-    if (!$input || !is_string($input)) {
-      return '';
+    $parts = explode(':', $modifier);
+
+    switch ($parts[0]) {
+    case 'camel':
+      return $this->modifyCamel($input);
+    case 'clean':
+      return $this->modifyClean($input);
+    case 'date':
+      return $this->modifyDate($input, array_slice($parts, 1));
+    case 'email':
+      return $this->modifyEmail($input);
+    case 'kebab':
+      return $this->modifyKebab($input);
+    case 'limit':
+      return $this->modifyLimit($input, array_slice($parts, 1));
+    default:
+      throw new Exception(sprintf('%s() expects modifier to be whitelisted.',
+        __METHOD__
+      ));
+    }
+  }
+
+  /**
+   * modifyCamel
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyCamel(string $input): string
+  {
+    return Str::camel($input);
+  }
+
+  /**
+   * modifyClean
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyClean(string $input): string
+  {
+    return trim(preg_replace('/\s+/', ' ', $input));
+  }
+
+  /**
+   * modifyDate
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  protected function modifyDate(string $input, array $params): string
+  {
+    $carbon = Carbon::parse($input);
+
+    if (count($params) < 1) {
+      return $carbon->format('m/d/Y');
     }
 
-    if (!$modifier || !is_string($modifier)) {
-      return $input;
+    $format = implode(':', $params);
+    $format = trim($format, '"');
+
+    switch ($format) {
+    case 'ATOM':
+      $format = DateTime::ATOM;
+      break;
+    case 'ISO8601':
+      $format = DateTime::ATOM;
+      break;
+    case 'RFC3339':
+      $format = DateTime::RFC3339;
+      break;
+    case 'datetime':
+      $format = 'Y-m-d H:i:s';
+      break;
     }
 
-    // This isn't ideal, but it's the best place to handle modifier
-    // exceptions. There's a lot of modifications going on, so we want to
-    // swallow any exceptions and move on quickly.
-    try {
-      $parts = explode(':', $modifier);
+    return $carbon->format($format);
+  }
 
-      $method = sprintf('modify%s', Str::studly($parts[0]));
+  /**
+   * modifyEmail
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyEmail(string $input): string
+  {
+    $emails = explode(',', $input);
 
-      return (method_exists($this, $method))
-        ? $this->$method($input, array_slice($parts, 1))
-        : $input;
-    } catch (Exception $e) {
-      // TODO: Log this with a low priority to catch edge cases and improve
-      // performance.
-      return $input;
+    $email = trim($emails[0]);
+
+    return filter_var($email, FILTER_VALIDATE_EMAIL) ? Str::lower($email) : '';
+  }
+
+  /**
+   * modifyKebab
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyKebab(string $input): string
+  {
+    return Str::kebab($input);
+  }
+
+  /**
+   * modifyLimit
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  protected function modifyLimit(string $input, array $params): string
+  {
+    $limit = isset($params[0]) ? (int)$params[0] : 100;
+    $end   = isset($params[1]) ? $params[1] : '...';
+
+    return Str::limit($input, $limit, $end);
+  }
+
+  /**
+   * modifyLower
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  protected function modifyLower($input, $params = [])
+  {
+    if (isset($params[0])) {
+      $ignore = explode(',', $params[0]);
+
+      if (in_array($input, $ignore)) {
+        return $input;
+      }
     }
 
-    return $input;
+    return Str::lower($input);
   }
 
   /**
@@ -634,6 +757,18 @@ class Sortie
   }
 
   /**
+   * Returns human-readable information about a variable.
+   *
+   * @param mixed $variable
+   *
+   * @return string
+   */
+  protected function getReadableVariable($variable): string
+  {
+    return is_string($variable) ? $variable : json_encode($variable);
+  }
+
+  /**
    * replaceBoolean
    *
    * @param array $expression
@@ -716,139 +851,6 @@ class Sortie
 
   // Static Methods
   // ---------------------------------------------------------------------------
-
-  /**
-   * modifyCamel
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyCamel($input, $params = [])
-  {
-    return Str::camel($input);
-  }
-
-  /**
-   * modifyClean
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyClean($input, $params = [])
-  {
-    return trim(preg_replace('/\s+/', ' ', $input));
-  }
-
-  /**
-   * modifyDate
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyDate($input, $params = [])
-  {
-    $carbon = Carbon::parse($input);
-
-    if (count($params) < 1) {
-      return $carbon->format('m/d/Y');
-    }
-
-    $format = implode(':', $params);
-    $format = trim($format, "'");
-
-    if (defined("DateTime::{$format}")) {
-      $format = constant("DateTime::{$format}");
-    }
-
-    switch ($format) {
-    case 'datetime':
-      $format = 'Y-m-d H:i:s';
-      break;
-    }
-
-    return $carbon->format($format);
-  }
-
-  /**
-   * modifyEmail
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyEmail($input, $params = [])
-  {
-    $emails = explode(',', $input);
-
-    $email = isset($emails[0]) ? trim($emails[0]) : '';
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-      return '';
-    }
-
-    return Str::lower($email);
-  }
-
-  /**
-   * modifyKebab
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyKebab($input, $params = [])
-  {
-    return Str::kebab($input);
-  }
-
-  /**
-   * modifyLimit
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyLimit($input, $params = [])
-  {
-    if (count($params) < 1) {
-      return $input;
-    }
-
-    $limit = isset($params[0]) ? (int)$params[0] : 100;
-    $end   = isset($params[1]) ? $params[1] : '...';
-
-    return Str::limit($input, $limit, $end);
-  }
-
-  /**
-   * modifyLower
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  public static function modifyLower($input, $params = [])
-  {
-    if (isset($params[0])) {
-      $ignore = explode(',', $params[0]);
-
-      if (in_array($input, $ignore)) {
-        return $input;
-      }
-    }
-
-    return Str::lower($input);
-  }
 
   /**
    * Sanitizes raw data.
