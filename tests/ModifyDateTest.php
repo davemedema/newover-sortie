@@ -6,9 +6,20 @@ use Tests\AbstractTestCase;
 
 class ModifyDateTest extends AbstractTestCase
 {
-  const TEST_ATOM     = '2010-01-01T00:00:00+00:00';
+  /**
+   * @const string
+   */
+  const TEST_ATOM = '2010-01-01T00:00:00+00:00';
+
+  /**
+   * @const string
+   */
   const TEST_DATETIME = '2010-01-01 00:00:00';
-  const TEST_DEFAULT  = '01/01/2010';
+
+  /**
+   * @const string
+   */
+  const TEST_DEFAULT = '01/01/2010';
 
   // Data Providers
   // ---------------------------------------------------------------------------

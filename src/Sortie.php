@@ -79,7 +79,7 @@ class Sortie
    *
    * @return string
    */
-  public function process($data)
+  public function process(array $data): string
   {
     $data      = $this->sanitizeData($data);
     $processed = $this->field;
@@ -203,25 +203,76 @@ class Sortie
    */
   protected function modify(string $input, string $modifier): string
   {
-    $parts = explode(':', $modifier);
+    try {
+      $parts = explode(':', $modifier);
 
-    switch ($parts[0]) {
-    case 'camel':
-      return $this->modifyCamel($input);
-    case 'clean':
-      return $this->modifyClean($input);
-    case 'date':
-      return $this->modifyDate($input, array_slice($parts, 1));
-    case 'email':
-      return $this->modifyEmail($input);
-    case 'kebab':
-      return $this->modifyKebab($input);
-    case 'limit':
-      return $this->modifyLimit($input, array_slice($parts, 1));
-    default:
-      throw new Exception(sprintf('%s() expects modifier to be whitelisted.',
-        __METHOD__
-      ));
+      switch ($parts[0]) {
+      case 'camel':
+        return $this->modifyCamel($input);
+      case 'clean':
+        return $this->modifyClean($input);
+      case 'date':
+        return $this->modifyDate($input, array_slice($parts, 1));
+      case 'email':
+        return $this->modifyEmail($input);
+      case 'exception':
+        return $this->modifyException($input);
+      case 'kebab':
+        return $this->modifyKebab($input);
+      case 'limit':
+        return $this->modifyLimit($input, array_slice($parts, 1));
+      case 'lower':
+        return $this->modifyLower($input, array_slice($parts, 1));
+      case 'number':
+        return $this->modifyNumber($input, array_slice($parts, 1));
+      case 'phone':
+        return $this->modifyPhone($input, array_slice($parts, 1));
+      case 'pick':
+        return $this->modifyPick($input, array_slice($parts, 1));
+      case 'piped':
+        return $this->modifyPiped($input, array_slice($parts, 1));
+      case 'plural':
+        return $this->modifyPlural($input);
+      case 'postal':
+        return $this->modifyPostal($input, array_slice($parts, 1));
+      case 'price':
+        return $this->modifyPrice($input);
+      case 'replace':
+        return $this->modifyReplace($input, array_slice($parts, 1));
+      case 'singular':
+        return $this->modifySingular($input);
+      case 'slug':
+        return $this->modifySlug($input);
+      case 'snake':
+        return $this->modifySnake($input);
+      case 'studly':
+        return $this->modifyStudly($input);
+      case 'substr':
+        return $this->modifySubstr($input, array_slice($parts, 1));
+      case 'title':
+        return $this->modifyTitle($input, array_slice($parts, 1));
+      case 'trim':
+        return $this->modifyTrim($input);
+      case 'ucfirst':
+        return $this->modifyUcfirst($input);
+      case 'upper':
+        return $this->modifyUpper($input, array_slice($parts, 1));
+      case 'url':
+        return $this->modifyUrl($input);
+      case 'urldecode':
+        return $this->modifyUrldecode($input);
+      case 'words':
+        return $this->modifyWords($input, array_slice($parts, 1));
+      case 'year':
+        return $this->modifyYear($input);
+      default:
+        throw new Exception(sprintf('%s() expects modifier to be whitelisted.',
+          __METHOD__
+        ));
+      }
+    } catch (Exception $e) {
+      // TODO: Log this.
+      return $input;
     }
   }
 
@@ -303,6 +354,18 @@ class Sortie
   }
 
   /**
+   * modifyException
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyException(string $input): string
+  {
+    throw new Exception('Exception for testing purposes.');
+  }
+
+  /**
    * modifyKebab
    *
    * @param string $input
@@ -338,7 +401,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyLower($input, $params = [])
+  protected function modifyLower(string $input, array $params): string
   {
     if (isset($params[0])) {
       $ignore = explode(',', $params[0]);
@@ -352,19 +415,6 @@ class Sortie
   }
 
   /**
-   * modifyException
-   *
-   * @param string $input
-   * @param array  $params
-   *
-   * @return string
-   */
-  protected function modifyException($input, $params)
-  {
-    throw new Exception('Exception for testing purposes.');
-  }
-
-  /**
    * modifyNumber
    *
    * @param string $input
@@ -372,7 +422,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyNumber($input, $params)
+  protected function modifyNumber(string $input, array $params): string
   {
     $decimals = isset($params[0]) ? (int)$params[0] : 0;
 
@@ -393,7 +443,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyPhone($input, $params)
+  protected function modifyPhone(string $input, array $params): string
   {
     $phone = preg_replace('/[^\d]/', '', $input);
 
@@ -423,7 +473,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyPick($input, $params)
+  protected function modifyPick(string $input, array $params): string
   {
     if (count($params) < 2) {
       return $input;
@@ -456,7 +506,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyPiped($input, $params)
+  protected function modifyPiped(string $input, array $params): string
   {
     if (count($params) < 1) {
       return $input;
@@ -471,11 +521,10 @@ class Sortie
    * modifyPlural
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyPlural($input, $params)
+  protected function modifyPlural(string $input): string
   {
     return Str::plural($input);
   }
@@ -488,7 +537,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyPostal($input, $params)
+  protected function modifyPostal(string $input, array $params): string
   {
     $postal = trim($input);
 
@@ -521,11 +570,10 @@ class Sortie
    * modifyPrice
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyPrice($input, $params)
+  protected function modifyPrice(string $input): string
   {
     return $this->modifyNumber($input, ['2']);
   }
@@ -538,7 +586,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyReplace($input, $params)
+  protected function modifyReplace(string $input, array $params): string
   {
     if (!isset($params[0]) || !isset($params[1])) {
       return $input;
@@ -557,11 +605,10 @@ class Sortie
    * modifySingular
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifySingular($input, $params)
+  protected function modifySingular(string $input): string
   {
     return Str::singular($input);
   }
@@ -570,11 +617,10 @@ class Sortie
    * modifySlug
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifySlug($input, $params)
+  protected function modifySlug(string $input): string
   {
     return Str::slug($input);
   }
@@ -583,11 +629,10 @@ class Sortie
    * modifySnake
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifySnake($input, $params)
+  protected function modifySnake(string $input): string
   {
     return Str::snake($input);
   }
@@ -596,11 +641,10 @@ class Sortie
    * modifyStudly
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyStudly($input, $params)
+  protected function modifyStudly(string $input): string
   {
     return Str::studly($input);
   }
@@ -613,7 +657,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifySubstr($input, $params)
+  protected function modifySubstr(string $input, array $params): string
   {
     if (count($params) < 1) {
       return $input;
@@ -633,7 +677,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyTitle($input, $params)
+  protected function modifyTitle(string $input, array $params): string
   {
     if (isset($params[0])) {
       $ignore = explode(',', $params[0]);
@@ -650,11 +694,10 @@ class Sortie
    * modifyTrim
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyTrim($input, $params)
+  protected function modifyTrim(string $input): string
   {
     return trim($input);
   }
@@ -663,11 +706,10 @@ class Sortie
    * modifyUcfirst
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyUcfirst($input, $params)
+  protected function modifyUcfirst(string $input): string
   {
     return Str::ucfirst($input);
   }
@@ -680,7 +722,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyUpper($input, $params)
+  protected function modifyUpper(string $input, array $params): string
   {
     if (isset($params[0])) {
       $ignore = explode(',', $params[0]);
@@ -697,11 +739,10 @@ class Sortie
    * modifyUrl
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyUrl($input, $params)
+  protected function modifyUrl(string $input): string
   {
     $url = urldecode($input);
     $url = trim($url);
@@ -714,11 +755,10 @@ class Sortie
    * modifyUrldecode
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyUrldecode($input, $params)
+  protected function modifyUrldecode(string $input): string
   {
     return urldecode($input);
   }
@@ -731,7 +771,7 @@ class Sortie
    *
    * @return string
    */
-  protected function modifyWords($input, $params)
+  protected function modifyWords(string $input, array $params): string
   {
     if (count($params) < 1) {
       return $input;
@@ -747,25 +787,12 @@ class Sortie
    * modifyYear
    *
    * @param string $input
-   * @param array  $params
    *
    * @return string
    */
-  protected function modifyYear($input, $params)
+  protected function modifyYear(string $input): string
   {
     return (string)(int)$input;
-  }
-
-  /**
-   * Returns human-readable information about a variable.
-   *
-   * @param mixed $variable
-   *
-   * @return string
-   */
-  protected function getReadableVariable($variable): string
-  {
-    return is_string($variable) ? $variable : json_encode($variable);
   }
 
   /**
@@ -859,8 +886,12 @@ class Sortie
    *
    * @return array
    */
-  public static function sanitizeData($data)
+  public static function sanitizeData(array $data): array
   {
+    if (!is_array($data)) {
+      return [];
+    }
+
     $sanitized = [];
 
     foreach ($data as $key => $value) {
@@ -877,8 +908,12 @@ class Sortie
    *
    * @return string
    */
-  public static function sanitizeExpression($expression)
+  public static function sanitizeExpression(string $expression): string
   {
+    if (!is_string($expression)) {
+      return '';
+    }
+
     $sanitized = trim($expression);
 
     return $sanitized;
@@ -891,8 +926,12 @@ class Sortie
    *
    * @return string
    */
-  public static function sanitizeField($field)
+  public static function sanitizeField($field): string
   {
+    if (!is_string($field)) {
+      return '';
+    }
+
     $sanitized = trim($field);
 
     // Simple...

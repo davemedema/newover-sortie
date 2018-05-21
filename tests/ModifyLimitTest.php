@@ -6,7 +6,10 @@ use Tests\AbstractTestCase;
 
 class ModifyLimitTest extends AbstractTestCase
 {
-  const TEST_LIMIT  = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+  /**
+   * @const string
+   */
+  const TEST_LIMIT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 
   // Data Providers
   // ---------------------------------------------------------------------------
