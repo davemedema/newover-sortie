@@ -886,7 +886,7 @@ class Sortie
    *
    * @return array
    */
-  public static function sanitizeData(array $data): array
+  public static function sanitizeData($data): array
   {
     if (!is_array($data)) {
       return [];
@@ -908,7 +908,7 @@ class Sortie
    *
    * @return string
    */
-  public static function sanitizeExpression(string $expression): string
+  public static function sanitizeExpression($expression): string
   {
     if (!is_string($expression)) {
       return '';
