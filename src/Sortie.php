@@ -207,16 +207,22 @@ class Sortie
       $parts = explode(':', $modifier);
 
       switch ($parts[0]) {
+      case 'bodystyle':
+        return $this->modifyBodyStyle($input);
       case 'camel':
         return $this->modifyCamel($input);
       case 'clean':
         return $this->modifyClean($input);
       case 'date':
         return $this->modifyDate($input, array_slice($parts, 1));
+      case 'drivetrain':
+        return $this->modifyDrivetrain($input);
       case 'email':
         return $this->modifyEmail($input);
       case 'exception':
         return $this->modifyException($input);
+      case 'fueltype':
+        return $this->modifyFuelType($input);
       case 'kebab':
         return $this->modifyKebab($input);
       case 'limit':
@@ -251,6 +257,8 @@ class Sortie
         return $this->modifySubstr($input, array_slice($parts, 1));
       case 'title':
         return $this->modifyTitle($input, array_slice($parts, 1));
+      case 'transmission':
+        return $this->modifyTransmission($input);
       case 'trim':
         return $this->modifyTrim($input);
       case 'ucfirst':
@@ -273,6 +281,33 @@ class Sortie
     } catch (Exception $e) {
       // TODO: Log this.
       return $input;
+    }
+  }
+
+  /**
+   * modifyBodyStyle
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyBodyStyle(string $input): string
+  {
+    $input = Str::upper($input);
+
+    switch ($input) {
+    case 'CONVERTIBLE':
+    case 'COUPE':
+    case 'HATCHBACK':
+    case 'MINIVAN':
+    case 'SEDAN':
+    case 'SUV':
+    case 'WAGON':
+      return $input;
+    case 'PICKUP':
+      return 'TRUCK';
+    default:
+      return 'OTHER';
     }
   }
 
@@ -338,6 +373,29 @@ class Sortie
   }
 
   /**
+   * modifyDrivetrain
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyDrivetrain(string $input): string
+  {
+    $input = Str::upper($input);
+
+    switch ($input) {
+    case 'AWD':
+    case 'FWD':
+    case 'RWD':
+      return $input;
+    case '4WD':
+      return '4X4';
+    default:
+      return 'Other';
+    }
+  }
+
+  /**
    * modifyEmail
    *
    * @param string $input
@@ -363,6 +421,31 @@ class Sortie
   protected function modifyException(string $input): string
   {
     throw new Exception('Exception for testing purposes.');
+  }
+
+  /**
+   * modifyFuelType
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyFuelType(string $input): string
+  {
+    $input = Str::lower($input);
+
+    switch ($input) {
+    case 'diesel fuel':
+      return 'Diesel';
+    case 'flex fuel':
+      return 'Flex';
+    case 'gasoline fuel':
+      return 'Gasoline';
+    case 'hybrid fuel':
+      return 'Hybrid';
+    default:
+      return 'Gasoline';
+    }
   }
 
   /**
@@ -688,6 +771,26 @@ class Sortie
     }
 
     return Str::title($input);
+  }
+
+  /**
+   * modifyTransmission
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyTransmission(string $input): string
+  {
+    $input = Str::lower($input);
+
+    switch ($input) {
+    case 'automatic':
+    case 'manual':
+      return $input;
+    default:
+      return 'automatic';
+    }
   }
 
   /**
