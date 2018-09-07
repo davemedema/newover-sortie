@@ -14,15 +14,15 @@ class ModifyBodyStyleTest extends AbstractTestCase
     return [
       ['convertible', 'CONVERTIBLE'],
       ['coupe',       'COUPE'],
+      ['crossover',   'CROSSOVER'],
       ['hatchback',   'HATCHBACK'],
       ['minivan',     'MINIVAN'],
       ['pickup',      'TRUCK'],
       ['sedan',       'SEDAN'],
       ['suv',         'SUV'],
       ['wagon',       'WAGON'],
-      ['crossover',   'OTHER'],
+      ['van',         'VAN'],
       ['specialty',   'OTHER'],
-      ['van',         'OTHER'],
       ['foo',         'OTHER'],
       ['bar',         'OTHER'],
     ];

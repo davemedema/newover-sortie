@@ -298,10 +298,12 @@ class Sortie
     switch ($input) {
     case 'CONVERTIBLE':
     case 'COUPE':
+    case 'CROSSOVER':
     case 'HATCHBACK':
     case 'MINIVAN':
     case 'SEDAN':
     case 'SUV':
+    case 'VAN':
     case 'WAGON':
       return $input;
     case 'PICKUP':
@@ -658,7 +660,16 @@ class Sortie
    */
   protected function modifyPrice(string $input): string
   {
-    return $this->modifyNumber($input, ['2']);
+    $number = $this->modifyNumber($input, ['2']);
+
+    switch ($number) {
+    case '0':
+    case '0.0':
+    case '0.00':
+      return '';
+    }
+
+    return $number;
   }
 
   /**
