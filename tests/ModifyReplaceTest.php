@@ -40,5 +40,12 @@ class ModifyReplaceTest extends AbstractTestCase
     $actual = $sortie->process(['foo' => 'foo bar baz']);
 
     $this->assertSame('FOO bar baz', $actual);
+
+    // Asterisks
+    $sortie = new Sortie("[foo->replace:'/\*+/':'']");
+
+    $actual = $sortie->process(['foo' => '*foo*']);
+
+    $this->assertSame('foo', $actual);
   }
 }
