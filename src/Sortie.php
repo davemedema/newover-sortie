@@ -229,6 +229,8 @@ class Sortie
         return $this->modifyLimit($input, array_slice($parts, 1));
       case 'lower':
         return $this->modifyLower($input, array_slice($parts, 1));
+      case 'match':
+        return $this->modifyMatch($input, array_slice($parts, 1));
       case 'number':
         return $this->modifyNumber($input, array_slice($parts, 1));
       case 'phone':
@@ -497,6 +499,35 @@ class Sortie
     }
 
     return Str::lower($input);
+  }
+
+  /**
+   * modifyMatch
+   *
+   * @param string $input
+   * @param array  $params
+   *
+   * @return string
+   */
+  protected function modifyMatch(string $input, array $params): string
+  {
+    if (!isset($params[0])) {
+      return $input;
+    }
+
+    $pattern = trim($params[0], "'");
+    $pattern = str_replace('%LB%', '[', $pattern);
+    $pattern = str_replace('%RB%', ']', $pattern);
+
+    $index = isset($params[1]) ? (int)$params[1] : 0;
+
+    preg_match($pattern, $input, $matches);
+
+    if (isset($matches[$index])) {
+      return $matches[$index];
+    } else {
+      return $input;
+    }
   }
 
   /**
