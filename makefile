@@ -1,7 +1,7 @@
 default:
 	@make test
 
-# make TAG_VERSION=1.0.0 build
+# make TAG_VERSION=1.0.0 tag
 tag:
 	@echo '$(TAG_VERSION)' > VERSION.txt
 	@git add .
