@@ -25,7 +25,7 @@ class ModifyMatchTest extends AbstractTestCase
 
     $actual = $sortie->process(['foo' => 'Foo 123 456 Baz']);
 
-    $this->assertSame('Foo 123 456 Baz', $actual);
+    $this->assertSame('', $actual);
 
     // Full pattern match...
     $sortie = new Sortie("[foo->match:'/Bar/']");
@@ -46,6 +46,13 @@ class ModifyMatchTest extends AbstractTestCase
 
     $actual = $sortie->process(['foo' => 'Foo 123 Bar 456 Baz']);
 
-    $this->assertSame('Foo 123 Bar 456 Baz', $actual);
+    $this->assertSame('', $actual);
+
+    // URL...
+    $sortie = new Sortie("[foo->match:'#http%CN%//www\.example\.com/Inventory/Details/\d+#i']");
+
+    $actual = $sortie->process(['foo' => 'Lorum ipsum dolor sit http://www.example.com/Inventory/Details/48489564']);
+
+    $this->assertSame('http://www.example.com/Inventory/Details/48489564', $actual);
   }
 }

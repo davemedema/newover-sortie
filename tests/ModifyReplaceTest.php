@@ -41,11 +41,25 @@ class ModifyReplaceTest extends AbstractTestCase
 
     $this->assertSame('FOO bar baz', $actual);
 
+    // Colon
+    $sortie = new Sortie("[foo->replace:'/%CN%/':'FOO']");
+
+    $actual = $sortie->process(['foo' => 'foo : baz']);
+
+    $this->assertSame('foo FOO baz', $actual);
+
     // Asterisks
     $sortie = new Sortie("[foo->replace:'/\*+/':'']");
 
     $actual = $sortie->process(['foo' => '*foo*']);
 
     $this->assertSame('foo', $actual);
+
+    // Subpattern
+    $sortie = new Sortie('[foo->replace:\'/^Foo\s(123)\sBar\s(456).*$/\':\'${1}-${2}\']');
+
+    $actual = $sortie->process(['foo' => 'Foo 123 Bar 456 Baz']);
+
+    $this->assertSame('123-456', $actual);
   }
 }

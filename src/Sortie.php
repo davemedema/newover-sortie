@@ -91,6 +91,9 @@ class Sortie
       case 'boolean':
         $replace = $this->replaceBoolean($expression, $data);
         break;
+      case 'calc':
+        $replace = $this->replaceCalc($expression, $data);
+        break;
       case 'simple':
         $replace = $this->replaceSimple($expression, $data);
         break;
@@ -180,6 +183,12 @@ class Sortie
           'expression' => $expression,
           'parts'      => array_slice($matches, 1),
           'type'       => 'boolean',
+        ];
+      } else if (preg_match('/^(add|div|mul|sub)\(([^\)]+)\)$/iu', $expression, $matches)) {
+        $this->expressions[] = [
+          'expression' => $expression,
+          'parts'      => array_slice($matches, 1),
+          'type'       => 'calc',
         ];
       } else {
         $this->expressions[] = [
@@ -516,7 +525,8 @@ class Sortie
     }
 
     $pattern = trim($params[0], "'");
-    $pattern = str_replace('%LB%', '[', $pattern);
+    $pattern = str_replace('%CN%', ':', $pattern);
+    $pattern = str_replace('%RB%', ']', $pattern);
     $pattern = str_replace('%RB%', ']', $pattern);
 
     $index = isset($params[1]) ? (int)$params[1] : 0;
@@ -525,9 +535,9 @@ class Sortie
 
     if (isset($matches[$index])) {
       return $matches[$index];
-    } else {
-      return $input;
     }
+
+    return '';
   }
 
   /**
@@ -718,6 +728,7 @@ class Sortie
     }
 
     $pattern = trim($params[0], "'");
+    $pattern = str_replace('%CN%', ':', $pattern);
     $pattern = str_replace('%LB%', '[', $pattern);
     $pattern = str_replace('%RB%', ']', $pattern);
 
@@ -985,6 +996,50 @@ class Sortie
     ], $data);
 
     return ($replace1 === $replace2) ? $replace3 : $replace4;
+  }
+
+  /**
+   * replaceCalc
+   *
+   * @param array $expression
+   * @param array $data
+   *
+   * @return string
+   */
+  protected function replaceCalc($expression, $data)
+  {
+    $parts = $expression['parts'];
+
+    $expressions = $expression['parts'][1];
+    $expressions = explode(',', $expressions);
+
+    if (empty($expressions[0]) || empty($expressions[1])) {
+      // TODO: Log this to improve edge cases.
+      return '';
+    }
+
+    $value1 = $this->replaceSimple([
+      'expression' => $expressions[0],
+      'options'    => $this->getOptions($expressions[0]),
+      'type'       => 'simple',
+    ], $data);
+
+    $value2 = $this->replaceSimple([
+      'expression' => $expressions[1],
+      'options'    => $this->getOptions($expressions[1]),
+      'type'       => 'simple',
+    ], $data);
+
+    switch ($parts[0]) {
+    case 'add':
+      return (string)($value1 + $value2);
+    case 'div':
+      return (string)($value1 / $value2);
+    case 'mul':
+      return (string)($value1 * $value2);
+    case 'sub':
+      return (string)($value1 - $value2);
+    }
   }
 
   /**
