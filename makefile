@@ -1,6 +1,10 @@
 default:
 	@make test
 
+deploy:
+	@git push origin master
+	@git push origin --tags
+
 # make TAG_VERSION=1.0.0 tag
 tag:
 	@echo '$(TAG_VERSION)' > VERSION.txt
