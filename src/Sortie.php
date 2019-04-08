@@ -283,7 +283,7 @@ class Sortie
       case 'words':
         return $this->modifyWords($input, array_slice($parts, 1));
       case 'year':
-        return $this->modifyYear($input);
+        return $this->modifyYear($input, array_slice($parts, 1));
       default:
         throw new Exception(sprintf('%s() expects modifier to be whitelisted.',
           __METHOD__
@@ -485,6 +485,10 @@ class Sortie
   {
     $limit = isset($params[0]) ? (int)$params[0] : 100;
     $end   = isset($params[1]) ? $params[1] : '...';
+
+    if ($end === 'false') {
+      $end = '';
+    }
 
     return Str::limit($input, $limit, $end);
   }
@@ -936,19 +940,58 @@ class Sortie
     $words = isset($params[0]) ? (int)$params[0] : 100;
     $end   = isset($params[1]) ? $params[1] : '...';
 
-    return Str::words($input, $words, $end);
+    if ($end === 'false') {
+      $end = '';
+    }
+
+    preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $input, $matches);
+
+    if (!isset($matches[0])) {
+      return $input;
+    }
+
+    if (mb_strlen($input) === mb_strlen($matches[0])) {
+      return $input;
+    }
+
+    return rtrim($matches[0]).$end;
   }
 
   /**
    * modifyYear
    *
    * @param string $input
+   * @param array  $params
    *
    * @return string
    */
-  protected function modifyYear(string $input): string
+  protected function modifyYear(string $input, array $params): string
   {
-    return (string)(int)$input;
+    if (!preg_match('/^\\d\\d(\\d\\d)?$/iu', $input)) {
+      return '';
+    }
+
+    $digits = isset($params[0]) ? (int)$params[0] : 0;
+
+    if (!$digits) {
+      return $input;
+    }
+
+    if (mb_strlen($input) === $digits) {
+      return $input;
+    }
+
+    if ($digits === 2) {
+      return substr($input, -2);
+    }
+
+    $cutoff = isset($params[1]) ? (int)$params[1] : (int)date('y');
+
+    if ((int)$input <= $cutoff) {
+      return '20'.$input;
+    } else {
+      return '19'.$input;
+    }
   }
 
   /**

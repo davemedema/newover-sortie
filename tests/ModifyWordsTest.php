@@ -7,31 +7,87 @@ use Tests\AbstractTestCase;
 class ModifyWordsTest extends AbstractTestCase
 {
   /**
-   * test
+   * @const string
+   */
+  const TEST_INPUT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+
+  // Data Providers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * dataNoParams
+   */
+  public function dataNoParams()
+  {
+    return [
+      [self::TEST_INPUT, self::TEST_INPUT],
+    ];
+  }
+
+  /**
+   * dataWords
+   */
+  public function dataWords()
+  {
+    return [
+      ['0',   self::TEST_INPUT, self::TEST_INPUT],
+      ['1',   self::TEST_INPUT, 'Lorem...'],
+      ['3',   self::TEST_INPUT, 'Lorem ipsum dolor...'],
+      ['100', self::TEST_INPUT, self::TEST_INPUT],
+    ];
+  }
+
+  /**
+   * dataWordsEnd
+   */
+  public function dataWordsEnd()
+  {
+    return [
+      ['0',   '!',     self::TEST_INPUT, self::TEST_INPUT],
+      ['1',   '!',     self::TEST_INPUT, 'Lorem!'],
+      ['3',   '!',     self::TEST_INPUT, 'Lorem ipsum dolor!'],
+      ['100', '!',     self::TEST_INPUT, self::TEST_INPUT],
+      ['1',   '',      self::TEST_INPUT, 'Lorem'],
+      ['1',   'false', self::TEST_INPUT, 'Lorem'],
+    ];
+  }
+
+  // Tests
+  // ---------------------------------------------------------------------------
+
+  /**
+   * @dataProvider dataNoParams()
    *
    * @group modify-words
    */
-  public function test()
+  public function testNoParams($input, $expected)
   {
-    // No parameters...
     $sortie = new Sortie('[foo->words]');
 
-    $actual = $sortie->process(['foo' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.']);
+    $this->assertSame($expected, $sortie->process(['foo' => $input]));
+  }
 
-    $this->assertSame('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', $actual);
+  /**
+   * @dataProvider dataWords()
+   *
+   * @group modify-words
+   */
+  public function testWords($words, $input, $expected)
+  {
+    $sortie = new Sortie("[foo->words:{$words}]");
 
-    // No end...
-    $sortie = new Sortie('[foo->words:3]');
+    $this->assertSame($expected, $sortie->process(['foo' => $input]));
+  }
 
-    $actual = $sortie->process(['foo' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.']);
+  /**
+   * @dataProvider dataWordsEnd()
+   *
+   * @group modify-words
+   */
+  public function testWordsEnd($words, $end, $input, $expected)
+  {
+    $sortie = new Sortie("[foo->words:{$words}:{$end}]");
 
-    $this->assertSame('Lorem ipsum dolor...', $actual);
-
-    // With end...
-    $sortie = new Sortie('[foo->words:3:!]');
-
-    $actual = $sortie->process(['foo' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.']);
-
-    $this->assertSame('Lorem ipsum dolor!', $actual);
+    $this->assertSame($expected, $sortie->process(['foo' => $input]));
   }
 }

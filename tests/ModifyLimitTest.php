@@ -9,7 +9,7 @@ class ModifyLimitTest extends AbstractTestCase
   /**
    * @const string
    */
-  const TEST_LIMIT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+  const TEST_INPUT = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 
   // Data Providers
   // ---------------------------------------------------------------------------
@@ -20,7 +20,7 @@ class ModifyLimitTest extends AbstractTestCase
   public function dataNoParams()
   {
     return [
-      [self::TEST_LIMIT, self::TEST_LIMIT],
+      [self::TEST_INPUT, self::TEST_INPUT],
     ];
   }
 
@@ -30,9 +30,11 @@ class ModifyLimitTest extends AbstractTestCase
   public function dataLimit()
   {
     return [
-      ['1',  self::TEST_LIMIT, 'L...'],
-      ['5',  self::TEST_LIMIT, 'Lorem...'],
-      ['10', self::TEST_LIMIT, 'Lorem ipsu...'],
+      ['0',   self::TEST_INPUT, '...'],
+      ['1',   self::TEST_INPUT, 'L...'],
+      ['5',   self::TEST_INPUT, 'Lorem...'],
+      ['10',  self::TEST_INPUT, 'Lorem ipsu...'],
+      ['100', self::TEST_INPUT, self::TEST_INPUT],
     ];
   }
 
@@ -42,9 +44,13 @@ class ModifyLimitTest extends AbstractTestCase
   public function dataLimitEnd()
   {
     return [
-      ['1',  '!',   self::TEST_LIMIT, 'L!'],
-      ['5',  '!!',  self::TEST_LIMIT, 'Lorem!!'],
-      ['10', '!!!', self::TEST_LIMIT, 'Lorem ipsu!!!'],
+      ['0',   '!',     self::TEST_INPUT, '!'],
+      ['1',   '!',     self::TEST_INPUT, 'L!'],
+      ['5',   '!!',    self::TEST_INPUT, 'Lorem!!'],
+      ['10',  '!!!',   self::TEST_INPUT, 'Lorem ipsu!!!'],
+      ['100', '!',     self::TEST_INPUT, self::TEST_INPUT],
+      ['1',   '',      self::TEST_INPUT, 'L'],
+      ['1',   'false', self::TEST_INPUT, 'L'],
     ];
   }
 
@@ -53,6 +59,8 @@ class ModifyLimitTest extends AbstractTestCase
 
   /**
    * @dataProvider dataNoParams()
+   *
+   * @group modify-limit
    */
   public function testNoParams($input, $expected)
   {
@@ -63,6 +71,8 @@ class ModifyLimitTest extends AbstractTestCase
 
   /**
    * @dataProvider dataLimit()
+   *
+   * @group modify-limit
    */
   public function testLimit($limit, $input, $expected)
   {
@@ -73,6 +83,8 @@ class ModifyLimitTest extends AbstractTestCase
 
   /**
    * @dataProvider dataLimitEnd()
+   *
+   * @group modify-limit
    */
   public function testLimitEnd($limit, $end, $input, $expected)
   {
