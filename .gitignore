@@ -16,4 +16,5 @@ Thumbs.db
 /.vscode
 /private
 /tests/coverage
+/tests/fixtures
 /vendor
