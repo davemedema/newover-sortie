@@ -16,14 +16,14 @@ class ProcessTest extends AbstractTestCase
     // Empty...
     $sortie = new Sortie('');
 
-    $actual = $sortie->process(['foo' => 'Foo']);
+    $actual = $sortie->process(['foo' => 'Foo'], true);
 
     $this->assertEmpty($actual);
 
     // Simple...
     $sortie = new Sortie('[foo]');
 
-    $actual = $sortie->process(['foo' => 'oof']);
+    $actual = $sortie->process(['foo' => 'oof'], true);
 
     $this->assertSame('oof', $actual);
 
@@ -36,14 +36,14 @@ class ProcessTest extends AbstractTestCase
       'beta'  => 'ateb',
       'baz'   => 'zab',
       'foo'   => 'oof'
-    ]);
+    ], true);
 
     $this->assertSame('oof bar zab ahpla', $actual);
 
     // No expressions in the field...
     $sortie = new Sortie('foo');
 
-    $actual = $sortie->process(['foo' => 'oof']);
+    $actual = $sortie->process(['foo' => 'oof'], true);
 
     $this->assertSame('foo', $actual);
 
@@ -54,16 +54,14 @@ class ProcessTest extends AbstractTestCase
       'alpha' => 'ahpla',
       'beta'  => 'ateb',
       'gamma' => 'ammag',
-    ]);
+    ], true);
 
     $this->assertSame('baz', $actual);
 
     // String only...
     $sortie = new Sortie('["foo"]');
 
-    $actual = $sortie->process([
-      'foo' => 'bar',
-    ]);
+    $actual = $sortie->process(['foo' => 'bar', true]);
 
     $this->assertSame('foo', $actual);
 
@@ -73,7 +71,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAR',
       'FOO' => 'foo',
-    ]);
+    ], true);
 
     $this->assertSame('foo BAR', $actual);
 
@@ -84,7 +82,7 @@ class ProcessTest extends AbstractTestCase
       ' bar' => 'BAR',
       'baz'  => 'BAZ',
       'foo ' => 'FOO',
-    ]);
+    ], true);
 
     $this->assertSame('FOO BAR BAZ', $actual);
   }
@@ -102,7 +100,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAZ',
       'foo' => 'BAZ',
-    ]);
+    ], true);
 
     $this->assertSame('TRUE', $actual);
 
@@ -112,7 +110,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAR',
       'foo' => 'FOO',
-    ]);
+    ], true);
 
     $this->assertSame('FALSE', $actual);
 
@@ -122,7 +120,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAZ',
       'foo' => 'BAZ',
-    ]);
+    ], true);
 
     $this->assertSame('', $actual);
 
@@ -132,7 +130,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAR',
       'foo' => 'FOO',
-    ]);
+    ], true);
 
     $this->assertSame('', $actual);
 
@@ -143,7 +141,7 @@ class ProcessTest extends AbstractTestCase
       'bar'  => 'tes t',
       'beta' => 'test',
       'foo'  => 'TES_T',
-    ]);
+    ], true);
 
     $this->assertSame('TEST', $actual);
 
@@ -155,7 +153,7 @@ class ProcessTest extends AbstractTestCase
       'beta'  => 'test',
       'foo'   => 'baz',
       'gamma' => 'test',
-    ]);
+    ], true);
 
     $this->assertSame('TEST', $actual);
 
@@ -165,7 +163,7 @@ class ProcessTest extends AbstractTestCase
     $actual = $sortie->process([
       'bar' => 'BAZ',
       'foo' => 'BAZ',
-    ]);
+    ], true);
 
     $this->assertSame('', $actual);
   }

@@ -76,11 +76,16 @@ class Sortie
    * process
    *
    * @param array $data
+   * @param bool  $sanitized
    *
    * @return string
    */
-  public function process(array $data): string
+  public function process(array $data, bool $sanitize = false): string
   {
+    if ($sanitize) {
+      $data = static::sanitizeData($data);
+    }
+
     $processed = $this->field;
 
     foreach ($this->expressions as $expression) {
@@ -420,7 +425,9 @@ class Sortie
 
     $email = trim($emails[0]);
 
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? strtolower($email) : '';
+    return filter_var($email, FILTER_VALIDATE_EMAIL)
+      ? strtolower($email)
+      : '';
   }
 
   /**
@@ -826,7 +833,7 @@ class Sortie
       }
     }
 
-    return Str::title($input);
+    return mb_convert_case($input, MB_CASE_TITLE, 'UTF-8');
   }
 
   /**
@@ -1191,5 +1198,29 @@ class Sortie
     $sanitized = preg_replace('/\s*}\s*/u',  '}', $sanitized); // Remove spaces around "}".
 
     return $sanitized;
+  }
+
+  /**
+   * Convert the given string to lower-case.
+   *
+   * @param string $value
+   *
+   * @return string
+   */
+  public static function toLower($value)
+  {
+    return mb_strtolower($value, 'UTF-8');
+  }
+
+  /**
+   * Convert the given string to upper-case.
+   *
+   * @param string $value
+   *
+   * @return string
+   */
+  protected static function toUpper($value)
+  {
+    return mb_strtoupper($value, 'UTF-8');
   }
 }
