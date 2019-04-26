@@ -81,7 +81,6 @@ class Sortie
    */
   public function process(array $data): string
   {
-    $data      = $this->sanitizeData($data);
     $processed = $this->field;
 
     foreach ($this->expressions as $expression) {
@@ -304,7 +303,7 @@ class Sortie
    */
   protected function modifyBodyStyle(string $input): string
   {
-    $input = Str::upper($input);
+    $input = strtoupper($input);
 
     switch ($input) {
     case 'CONVERTIBLE':
@@ -394,7 +393,7 @@ class Sortie
    */
   protected function modifyDrivetrain(string $input): string
   {
-    $input = Str::upper($input);
+    $input = strtoupper($input);
 
     switch ($input) {
     case 'AWD':
@@ -421,7 +420,7 @@ class Sortie
 
     $email = trim($emails[0]);
 
-    return filter_var($email, FILTER_VALIDATE_EMAIL) ? Str::lower($email) : '';
+    return filter_var($email, FILTER_VALIDATE_EMAIL) ? strtolower($email) : '';
   }
 
   /**
@@ -445,7 +444,7 @@ class Sortie
    */
   protected function modifyFuelType(string $input): string
   {
-    $input = Str::lower($input);
+    $input = strtolower($input);
 
     switch ($input) {
     case 'diesel fuel':
@@ -511,7 +510,7 @@ class Sortie
       }
     }
 
-    return Str::lower($input);
+    return strtolower($input);
   }
 
   /**
@@ -671,7 +670,7 @@ class Sortie
   {
     $postal = trim($input);
 
-    $country = isset($params[0]) ? Str::upper($params[0]) : 'US';
+    $country = isset($params[0]) ? strtoupper($params[0]) : 'US';
 
     switch ($country) {
     case 'CA':
@@ -839,7 +838,7 @@ class Sortie
    */
   protected function modifyTransmission(string $input): string
   {
-    $input = Str::lower($input);
+    $input = strtolower($input);
 
     switch ($input) {
     case 'automatic':
@@ -892,7 +891,7 @@ class Sortie
       }
     }
 
-    return Str::upper($input);
+    return strtoupper($input);
   }
 
   /**
@@ -1107,7 +1106,7 @@ class Sortie
       if (preg_match('/^"(.+)"$/u', $property, $matches)) {
         $replace = $matches[1];
       } else {
-        $property = Str::lower(trim($property));
+        $property = strtolower(trim($property));
         $replace  = $data[$property] ?? '';
       }
 
@@ -1138,7 +1137,7 @@ class Sortie
     $sanitized = [];
 
     foreach ($data as $key => $value) {
-      $sanitized[Str::lower(trim($key))] = $value;
+      $sanitized[strtolower(trim($key))] = $value;
     }
 
     return $sanitized;
