@@ -30,7 +30,7 @@ class ModifyWordsTest extends AbstractTestCase
   public function dataWords()
   {
     return [
-      ['0',   self::TEST_INPUT, self::TEST_INPUT],
+      ['0',   self::TEST_INPUT, ''],
       ['1',   self::TEST_INPUT, 'Lorem...'],
       ['3',   self::TEST_INPUT, 'Lorem ipsum dolor...'],
       ['100', self::TEST_INPUT, self::TEST_INPUT],
@@ -43,7 +43,7 @@ class ModifyWordsTest extends AbstractTestCase
   public function dataWordsEnd()
   {
     return [
-      ['0',   '!',     self::TEST_INPUT, self::TEST_INPUT],
+      ['0',   '!',     self::TEST_INPUT, ''],
       ['1',   '!',     self::TEST_INPUT, 'Lorem!'],
       ['3',   '!',     self::TEST_INPUT, 'Lorem ipsum dolor!'],
       ['100', '!',     self::TEST_INPUT, self::TEST_INPUT],

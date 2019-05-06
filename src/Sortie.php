@@ -216,9 +216,18 @@ class Sortie
    */
   protected function modify(string $input, string $modifier): string
   {
+    // Since we can now fallback to static strings, we no longer have a use
+    // case for changing an empty string to something more opinionated.
+    if ($input === '') {
+      return '';
+    }
+
     try {
       $parts = explode(':', $modifier);
 
+      // TODO: Find an efficient way to put some logging in to determine which
+      // modifiers are used the most. We can then adjust the switch ordering,
+      // or better yet, implement a more modern dynamic method approach.
       switch ($parts[0]) {
       case 'bodystyle':
         return $this->modifyBodyStyle($input);
@@ -294,8 +303,8 @@ class Sortie
         ));
       }
     } catch (Exception $e) {
-      // TODO: Log this.
-      return $input;
+      // TODO: Find an efficient way to log these.
+      return '';
     }
   }
 

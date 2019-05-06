@@ -25,6 +25,6 @@ class ModifyTest extends AbstractTestCase
 
     $actual = $sortie->process(['foo' => 'bar']);
 
-    $this->assertSame('bar', $actual);
+    $this->assertSame('', $actual);
   }
 }
