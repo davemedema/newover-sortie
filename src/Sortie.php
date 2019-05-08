@@ -379,6 +379,7 @@ class Sortie
 
     $format = implode(':', $params);
     $format = trim($format, '"');
+    $format = trim($format, "'");
 
     switch ($format) {
     case 'ATOM':

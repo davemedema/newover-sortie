@@ -49,6 +49,7 @@ class ModifyDateTest extends AbstractTestCase
       // Custom...
       ['"n/j/Y @ g:i a"', self::TEST_DATETIME, '1/1/2010 @ 12:00 am'],
       ['"Ymd"',           self::TEST_DATETIME, '20100101'],
+      ["'Ymd'",           self::TEST_DATETIME, '20100101'],
     ];
   }
 
@@ -62,7 +63,7 @@ class ModifyDateTest extends AbstractTestCase
   {
     $sortie = new Sortie('[foo->date]');
 
-    $this->assertSame($expected, $sortie->process(['foo' => $input]));
+    $this->assertSame($expected, $sortie->process(['foo' => $input], true));
   }
 
   /**
@@ -72,6 +73,6 @@ class ModifyDateTest extends AbstractTestCase
   {
     $sortie = new Sortie("[foo->date:{$format}]");
 
-    $this->assertSame($expected, $sortie->process(['foo' => $input]));
+    $this->assertSame($expected, $sortie->process(['foo' => $input], true));
   }
 }
