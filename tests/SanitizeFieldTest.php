@@ -25,4 +25,18 @@ class SanitizeFieldTest extends AbstractTestCase
 
     $this->assertSame('[if(foo=bar){"TRUE"}else{"FALSE"}] [if(alpha=beta){"TRUE"}else{"FALSE"}]', $actual);
   }
+
+  /**
+   * testLiterals
+   */
+  public function testLiterals()
+  {
+    $actual = Sortie::sanitizeField('[Foo (Bar) Baz->alpha]');
+
+    $this->assertSame('[Foo(Bar)Baz->alpha]', $actual);
+
+    $actual = Sortie::sanitizeField('[Foo %LP%Bar%RP% Baz->alpha]');
+
+    $this->assertSame('[Foo (Bar) Baz->alpha]', $actual);
+  }
 }

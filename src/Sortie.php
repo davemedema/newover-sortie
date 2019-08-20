@@ -1207,6 +1207,10 @@ class Sortie
     $sanitized = preg_replace('/\s*{\s*/u',  '{', $sanitized); // Remove spaces around "{".
     $sanitized = preg_replace('/\s*}\s*/u',  '}', $sanitized); // Remove spaces around "}".
 
+    // Literals...
+    $sanitized = str_replace('%LP%', '(', $sanitized);
+    $sanitized = str_replace('%RP%', ')', $sanitized);
+
     return $sanitized;
   }
 
