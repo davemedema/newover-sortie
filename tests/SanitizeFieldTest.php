@@ -6,37 +6,35 @@ use Tests\AbstractTestCase;
 
 class SanitizeFieldTest extends AbstractTestCase
 {
-  /**
-   * testSimpleExpressions
-   */
-  public function testSimpleExpressions()
+  public function data()
   {
-    $actual = Sortie::sanitizeField(' [ foo - > bar : baz | qux ] [  alpha  -  >  beta  :  gamma  |  delta  ]');
-
-    $this->assertSame('[foo->bar:baz|qux] [alpha->beta:gamma|delta]', $actual);
+    return [
+      'spaces' => [
+        ' [ foo - > bar : baz | qux ] [  alpha  -  >  beta  :  gamma  |  delta  ]',
+        '[foo->bar:baz|qux] [alpha->beta:gamma|delta]'
+      ],
+      'boolean' => [
+        '[ if ( foo = bar ) { "TRUE" } else { "FALSE" } ] [  if  (  alpha  =  beta  )  {  "TRUE"  }  else  { "FALSE" } ]',
+        '[if(foo=bar){"TRUE"}else{"FALSE"}] [if(alpha=beta){"TRUE"}else{"FALSE"}]'
+      ],
+      'raw literals' => [
+        '[Foo (Bar) Baz->alpha]',
+        '[Foo(Bar)Baz->alpha]'
+      ],
+      'escaped literals' => [
+        '[Foo %FLP%Bar%FRP% Baz->alpha]',
+        '[Foo (Bar) Baz->alpha]'
+      ],
+    ];
   }
 
   /**
-   * testBooleanExpressions
+   * @dataProvider data
    */
-  public function testBooleanExpressions()
+  public function test($field, $expected)
   {
-    $actual = Sortie::sanitizeField('[ if ( foo = bar ) { "TRUE" } else { "FALSE" } ] [  if  (  alpha  =  beta  )  {  "TRUE"  }  else  { "FALSE" } ]');
+    $actual = Sortie::sanitizeField($field);
 
-    $this->assertSame('[if(foo=bar){"TRUE"}else{"FALSE"}] [if(alpha=beta){"TRUE"}else{"FALSE"}]', $actual);
-  }
-
-  /**
-   * testLiterals
-   */
-  public function testLiterals()
-  {
-    $actual = Sortie::sanitizeField('[Foo (Bar) Baz->alpha]');
-
-    $this->assertSame('[Foo(Bar)Baz->alpha]', $actual);
-
-    $actual = Sortie::sanitizeField('[Foo %LP%Bar%RP% Baz->alpha]');
-
-    $this->assertSame('[Foo (Bar) Baz->alpha]', $actual);
+    $this->assertSame($expected, $actual);
   }
 }

@@ -166,5 +166,23 @@ class ProcessTest extends AbstractTestCase
     ], true);
 
     $this->assertSame('', $actual);
+
+    // Static string in condition...
+    $sortie = new Sortie('[if(foo->lower="bar"){"TRUE"}else{"FALSE"}]');
+
+    $actual = $sortie->process([
+      'foo' => 'BAR',
+    ], true);
+
+    $this->assertSame('TRUE', $actual);
+
+    // Static string in condition...
+    $sortie = new Sortie('[if(foo->replace:\'/^%LP%c%PI%cc%PI%cct%RP%%LB%0-9%RB%+$/i\':\'MATCH\'="MATCH"){"TRUE"}else{"FALSE"}]');
+
+    $actual = $sortie->process([
+      'foo' => 'C90689',
+    ], true);
+
+    $this->assertSame('TRUE', $actual);
   }
 }

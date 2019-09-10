@@ -750,7 +750,10 @@ class Sortie
     $pattern = trim($params[0], "'");
     $pattern = str_replace('%CN%', ':', $pattern);
     $pattern = str_replace('%LB%', '[', $pattern);
+    $pattern = str_replace('%LP%', '(', $pattern);
+    $pattern = str_replace('%PI%', '|', $pattern);
     $pattern = str_replace('%RB%', ']', $pattern);
+    $pattern = str_replace('%RP%', ')', $pattern);
 
     $replacement = trim($params[1], "'");
 
@@ -1208,8 +1211,8 @@ class Sortie
     $sanitized = preg_replace('/\s*}\s*/u',  '}', $sanitized); // Remove spaces around "}".
 
     // Literals...
-    $sanitized = str_replace('%LP%', '(', $sanitized);
-    $sanitized = str_replace('%RP%', ')', $sanitized);
+    $sanitized = str_replace('%FLP%', '(', $sanitized);
+    $sanitized = str_replace('%FRP%', ')', $sanitized);
 
     return $sanitized;
   }
