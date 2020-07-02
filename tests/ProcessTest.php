@@ -184,5 +184,21 @@ class ProcessTest extends AbstractTestCase
     ], true);
 
     $this->assertSame('TRUE', $actual);
+
+    // ---
+    $sortie = new Sortie('[if(certified->replace:\'/True/i\':\'MATCH\'="MATCH"){"Certified"}ELSE{condition->title}]');
+    $actual = $sortie->process([
+      'certified' => 'True',
+      'condition' => 'foo',
+    ], true);
+    $this->assertSame('Certified', $actual);
+
+    // ---
+    $sortie = new Sortie('[if(certified->replace:\'/True/i\':\'MATCH\'="MATCH"){"Certified"}ELSE{condition->title}]');
+    $actual = $sortie->process([
+      'certified' => 'False',
+      'condition' => 'new',
+    ], true);
+    $this->assertSame('New', $actual);
   }
 }

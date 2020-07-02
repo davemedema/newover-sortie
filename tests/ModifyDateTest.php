@@ -6,20 +6,9 @@ use Tests\AbstractTestCase;
 
 class ModifyDateTest extends AbstractTestCase
 {
-  /**
-   * @const string
-   */
-  const TEST_ATOM = '2010-01-01T00:00:00+00:00';
-
-  /**
-   * @const string
-   */
+  const TEST_ATOM     = '2010-01-01T00:00:00+00:00';
   const TEST_DATETIME = '2010-01-01 00:00:00';
-
-  /**
-   * @const string
-   */
-  const TEST_DEFAULT = '01/01/2010';
+  const TEST_DEFAULT  = '01/01/2010';
 
   // Data Providers
   // ---------------------------------------------------------------------------
@@ -50,6 +39,8 @@ class ModifyDateTest extends AbstractTestCase
       ['"n/j/Y @ g:i a"', self::TEST_DATETIME, '1/1/2010 @ 12:00 am'],
       ['"Ymd"',           self::TEST_DATETIME, '20100101'],
       ["'Ymd'",           self::TEST_DATETIME, '20100101'],
+      ['"md"',           '9-Sep', '0909'],
+      ['"md"',           '1-Feb', '0201'],
     ];
   }
 
@@ -74,5 +65,12 @@ class ModifyDateTest extends AbstractTestCase
     $sortie = new Sortie("[foo->date:{$format}]");
 
     $this->assertSame($expected, $sortie->process(['foo' => $input], true));
+  }
+
+  public function testEdgeCase1()
+  {
+    $sortie = new Sortie('[foo->replace:\'/^(.*)$/\':${1}-1970->date]');
+
+    $this->assertSame('01/02/1970', $sortie->process(['foo' => '02-01'], true));
   }
 }

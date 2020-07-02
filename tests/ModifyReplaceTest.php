@@ -34,6 +34,20 @@ class ModifyReplaceTest extends AbstractTestCase
 
     $this->assertSame('http://foo.com/bar.html', $actual);
 
+    // Raw pipe...
+    $sortie = new Sortie("[foo->replace:'/%LP%foo|bar%RP%/':'baz']");
+
+    $actual = $sortie->process(['foo' => 'bar'], true);
+
+    $this->assertSame('bar', $actual);
+
+    // Escaped pipe...
+    $sortie = new Sortie("[foo->replace:'/%LP%foo%PI%bar%RP%/':'baz']");
+
+    $actual = $sortie->process(['foo' => 'bar'], true);
+
+    $this->assertSame('baz', $actual);
+
     // Brackets...
     $sortie = new Sortie("[foo->replace:'/%LB%f%RB%oo/':'FOO']");
 
@@ -68,5 +82,15 @@ class ModifyReplaceTest extends AbstractTestCase
     $actual = $sortie->process(['WebsiteVDPURL' => 'https://www.carsforsale.com/vehicle/details/foo/bar/'], true);
 
     $this->assertSame('https://www.carwizedetroit.com/Inventory/Details/foo/bar/', $actual);
+
+    // Real-World Example
+    $sortie = new Sortie('[Stock->replace:\'/^%LP%%LB%WVTSPR%RB%%PI%cc%RP%?%LB%0-9%RB%+$/i\':\'MATCH\']');
+    $actual = $sortie->process(['Stock' => '6534'], true);
+    $this->assertSame('MATCH', $actual);
+
+    // Real-World Example
+    $sortie = new Sortie('[certified->replace:\'/True/i\':\'MATCH\']');
+    $actual = $sortie->process(['certified' => 'True'], true);
+    $this->assertSame('MATCH', $actual);
   }
 }

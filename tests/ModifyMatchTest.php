@@ -54,5 +54,15 @@ class ModifyMatchTest extends AbstractTestCase
     $actual = $sortie->process(['foo' => 'Lorum ipsum dolor sit http://www.example.com/Inventory/Details/48489564']);
 
     $this->assertSame('http://www.example.com/Inventory/Details/48489564', $actual);
+
+    // IRL Example
+    $sortie = new Sortie("[if(styledescription->match:'/SEL 2\.0/'=\"SEL 2.0\"){\"SEL 2.0T\"}else{trim}]");
+
+    $actual = $sortie->process([
+      'styledescription' => 'foo SEL 2.0 bar',
+      'trim' => 'TRIM',
+    ]);
+
+    $this->assertSame('SEL 2.0T', $actual);
   }
 }

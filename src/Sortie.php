@@ -108,6 +108,8 @@ class Sortie
     }
 
     $processed = $this->modifyClean($processed);
+    $processed = str_replace('\[', '[', $processed);
+    $processed = str_replace('\]', ']', $processed);
 
     return $processed;
   }
@@ -173,7 +175,7 @@ class Sortie
       return;
     }
 
-    preg_match_all('/\[([^\]]+)\]/u', $this->field, $matches);
+    preg_match_all('/(?<!\\\\)\\[([^\\]]+)(?<!\\\\)\\]/u', $this->field, $matches);
 
     if (empty($matches[1])) {
       return;

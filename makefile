@@ -14,5 +14,5 @@ build:
 
 test:
 	@echo 'Running tests...'
-	@phpunit --coverage-html=tests/coverage --verbose
+	@./vendor/bin/phpunit --coverage-html=tests/coverage --verbose
 	@echo 'Done.'
