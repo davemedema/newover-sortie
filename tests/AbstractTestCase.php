@@ -6,23 +6,6 @@ use Sortie\Sortie;
 
 abstract class AbstractTestCase extends TestCase
 {
-  // Overridden Methods
-  // ---------------------------------------------------------------------------
-
-  /**
-   * setUp
-   */
-  protected function setUp()
-  {
-  }
-
-  /**
-   * tearDown
-   */
-  protected function tearDown()
-  {
-  }
-
   // Protected Methods
   // ---------------------------------------------------------------------------
 
