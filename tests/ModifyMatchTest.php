@@ -34,7 +34,7 @@ class ModifyMatchTest extends AbstractTestCase
 
     $this->assertSame('Bar', $actual);
 
-    // Subpatter match...
+    // Subpattern match...
     $sortie = new Sortie("[foo->match:'/123\s(Bar)/:1']");
 
     $actual = $sortie->process(['foo' => 'Foo 123 Bar 456 Baz']);
@@ -55,7 +55,7 @@ class ModifyMatchTest extends AbstractTestCase
 
     $this->assertSame('http://www.example.com/Inventory/Details/48489564', $actual);
 
-    // IRL Example
+    // IRL Example 01
     $sortie = new Sortie("[if(styledescription->match:'/SEL 2\.0/'=\"SEL 2.0\"){\"SEL 2.0T\"}else{trim}]");
 
     $actual = $sortie->process([
@@ -64,5 +64,12 @@ class ModifyMatchTest extends AbstractTestCase
     ]);
 
     $this->assertSame('SEL 2.0T', $actual);
+
+    // IRL Example 01
+    $sortie = new Sortie("[foo->match:'/^(.*?)heated(.*)seats(.*?)$/']");
+
+    $actual = $sortie->process(['foo' => 'foo heated bar seats baz']);
+
+    $this->assertSame('foo heated bar seats baz', $actual);
   }
 }

@@ -548,7 +548,7 @@ class Sortie
 
     $pattern = trim($params[0], "'");
     $pattern = str_replace('%CN%', ':', $pattern);
-    $pattern = str_replace('%RB%', ']', $pattern);
+    $pattern = str_replace('%LB%', '[', $pattern);
     $pattern = str_replace('%RB%', ']', $pattern);
 
     $index = isset($params[1]) ? (int)$params[1] : 0;
