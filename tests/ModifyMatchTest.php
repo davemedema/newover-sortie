@@ -65,11 +65,22 @@ class ModifyMatchTest extends AbstractTestCase
 
     $this->assertSame('SEL 2.0T', $actual);
 
-    // IRL Example 01
+    // IRL Example 02
     $sortie = new Sortie("[foo->match:'/^(.*?)heated(.*)seats(.*?)$/']");
 
     $actual = $sortie->process(['foo' => 'foo heated bar seats baz']);
 
     $this->assertSame('foo heated bar seats baz', $actual);
+
+    // IRL Example 03
+    $pattern = '/heated%LB%^,%RB%+seats/isu';
+
+    $sortie = new Sortie("[foo->match:'{$pattern}']");
+
+    $actual1 = $sortie->process(['foo' => 'heated steering wheel, power seats']);
+    $actual2 = $sortie->process(['foo' => 'power steering, heated seats, all-wheel drive']);
+
+    $this->assertSame('', $actual1);
+    $this->assertSame('heated seats', $actual2);
   }
 }
