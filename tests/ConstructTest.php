@@ -54,8 +54,8 @@ class ConstructTest extends AbstractTestCase
     $this->assertSortie($sortie);
 
     $this->assertSame($expectedExpressions, $sortie->getExpressions());
-    $this->assertSame($expectedField,       $sortie->getField());
-    $this->assertSame($expectedProperties,  $sortie->getProperties());
+    $this->assertSame($expectedField, $sortie->getField());
+    $this->assertSame($expectedProperties, $sortie->getProperties());
   }
 
   /**
@@ -131,7 +131,7 @@ class ConstructTest extends AbstractTestCase
     $this->assertSortie($sortie);
 
     $this->assertSame($expectedExpressions, $sortie->getExpressions());
-    $this->assertSame($expectedField,       $sortie->getField());
-    $this->assertSame($expectedProperties,  $sortie->getProperties());
+    $this->assertSame($expectedField, $sortie->getField());
+    $this->assertSame($expectedProperties, $sortie->getProperties());
   }
 }

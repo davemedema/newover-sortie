@@ -85,6 +85,24 @@ class ProcessTest extends AbstractTestCase
     ], true);
 
     $this->assertSame('FOO BAR BAZ', $actual);
+
+    // Slashes...
+    $sortie = new Sortie('[Foo/Bar\Baz]');
+
+    $actual = $sortie->process([
+      'Foo/Bar\Baz' => 'FOOBARBAZ',
+    ], true);
+
+    $this->assertSame('FOOBARBAZ', $actual);
+
+    // Parentheses...
+    $sortie = new Sortie('[Foo %FLP%Bar%FRP%]');
+
+    $actual = $sortie->process([
+      'Foo (Bar)' => 'FOOBAR',
+    ], true);
+
+    $this->assertSame('FOOBAR', $actual);
   }
 
   /**
