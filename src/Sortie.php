@@ -283,6 +283,12 @@ class Sortie
         return $this->modifySubstr($input, array_slice($parts, 1));
       case 'title':
         return $this->modifyTitle($input, array_slice($parts, 1));
+
+      case 'timetodecimal':
+        return $this->modifyTimeToDecimal($input);
+      case 'decimaltotime':
+        return $this->modifyDecimalToTime($input);
+
       case 'transmission':
         return $this->modifyTransmission($input);
       case 'trim':
@@ -399,6 +405,48 @@ class Sortie
     }
 
     return $carbon->format($format);
+  }
+
+  /**
+   * modifyDecimalToTime
+   *
+   * As a general rule, we need to standardize what is returned from a modifier
+   * when it is invalid. Here we return the origin input, but maybe we should
+   * return and empty result instead.
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyDecimalToTime(string $input): string
+  {
+    if (!preg_match('/^-?(\d*)?(\.)?(\d*)$/um', $input)) {
+      return $input;
+    }
+
+    $float = (float)$input;
+    $zeros = '0:00';
+
+    if ($float <= 0) {
+      return $zeros;
+    }
+
+    $hours = floor($float);
+    $fraction = $float - $hours;
+
+    if ($fraction <= 0) {
+      return sprintf('%d:00', $hours);
+    }
+
+    $minutes = round(60 * $fraction);
+
+    if ($minutes <= 0) {
+      return sprintf('%d:00', $hours);
+    }
+
+    $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
+
+    return sprintf('%d:%s', $hours, $minutes);
   }
 
   /**
@@ -828,6 +876,37 @@ class Sortie
     $length = isset($params[1]) ? (int)$params[1] : null;
 
     return Str::substr($input, $start, $length);
+  }
+
+  /**
+   * modifyTimeToDecimal
+   *
+   * As a general rule, we need to standardize what is returned from a modifier
+   * when it is invalid. Here we return the origin input, but maybe we should
+   * return and empty result instead.
+   *
+   * @param string $input
+   *
+   * @return string
+   */
+  protected function modifyTimeToDecimal(string $input): string
+  {
+    if (!preg_match('/^(\d+)?:\d{2}$/iu', $input)) {
+      return $input;
+    }
+
+    $parts = explode(':', $input);
+
+    $h = (int)$parts[0];
+    $m = (int)$parts[1];
+
+    if ($m < 0 || $m > 60) {
+      return $input;
+    }
+
+    $decimal = $h + round($m / 60, 2);
+
+    return number_format($decimal, 2);
   }
 
   /**
