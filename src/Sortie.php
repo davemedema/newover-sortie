@@ -239,6 +239,8 @@ class Sortie
         return $this->modifyClean($input);
       case 'date':
         return $this->modifyDate($input, array_slice($parts, 1));
+      case 'decimaltotime':
+        return $this->modifyDecimalToTime($input);
       case 'drivetrain':
         return $this->modifyDrivetrain($input);
       case 'email':
@@ -281,14 +283,10 @@ class Sortie
         return $this->modifyStudly($input);
       case 'substr':
         return $this->modifySubstr($input, array_slice($parts, 1));
-      case 'title':
-        return $this->modifyTitle($input, array_slice($parts, 1));
-
       case 'timetodecimal':
         return $this->modifyTimeToDecimal($input);
-      case 'decimaltotime':
-        return $this->modifyDecimalToTime($input);
-
+      case 'title':
+        return $this->modifyTitle($input, array_slice($parts, 1));
       case 'transmission':
         return $this->modifyTransmission($input);
       case 'trim':
@@ -425,28 +423,31 @@ class Sortie
     }
 
     $float = (float)$input;
-    $zeros = '0:00';
 
-    if ($float <= 0) {
-      return $zeros;
+    if ($float === 0.0) {
+      return '0:00';
     }
 
-    $hours = floor($float);
-    $fraction = $float - $hours;
+    $sign = $float < 0 ? '-' : '';
 
-    if ($fraction <= 0) {
-      return sprintf('%d:00', $hours);
+    $absolute = abs($float);
+
+    $hours = floor($absolute);
+    $fraction = $absolute - $hours;
+
+    if ($fraction <= 0 || $fraction >= 1) {
+      return sprintf('%s%d:00', $sign, $hours);
     }
 
     $minutes = round(60 * $fraction);
 
     if ($minutes <= 0) {
-      return sprintf('%d:00', $hours);
+      return sprintf('%s%d:00', $sign, $hours);
     }
 
     $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
 
-    return sprintf('%d:%s', $hours, $minutes);
+    return sprintf('%s%d:%s', $sign, $hours, $minutes);
   }
 
   /**
